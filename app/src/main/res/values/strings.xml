@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MyMove_v2</string>
+    <string name="favorite">favorite</string>
+    <string name="search">search</string>
+    <string name="page_title">MOVE</string>
+    <string name="text_movie">move</string>
+    <string name="text_my_info">info</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="yts_movie">YTS MOVIE</string>
+</resources>
