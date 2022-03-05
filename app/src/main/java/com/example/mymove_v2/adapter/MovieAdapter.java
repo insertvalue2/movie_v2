@@ -1,6 +1,5 @@
 package com.example.mymove_v2.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.FitCenter;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.mymove_v2.R;
 import com.example.mymove_v2.models.Movie;
 
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder> {
 
-    List<Movie> list = new ArrayList<>();
+    private List<Movie> list = new ArrayList<>();
 
     @NonNull
     @Override
@@ -46,13 +47,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
         this.list = list;
     }
 
-
+    // inner static class
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView posterIv;
-        private TextView titleTv;
-        private TextView ratingTv;
-        private RatingBar ratingBar;
+        private final ImageView posterIv;
+        private final TextView titleTv;
+        private final TextView ratingTv;
+        private final RatingBar ratingBar;
 
         public MyViewHolder(View movieItemView) {
             super(movieItemView);
@@ -60,19 +61,18 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
             titleTv = movieItemView.findViewById(R.id.titleTv);
             ratingTv = movieItemView.findViewById(R.id.ratingTv);
             ratingBar = movieItemView.findViewById(R.id.ratingBar);
-
         }
 
         public void setItem(Movie movie) {
             titleTv.setText(movie.getTitle());
-            ratingTv.setText(movie.getRating() + "");
+            ratingTv.setText(String.valueOf(movie.getRating()));
             Glide.with(posterIv.getContext())
                     .load(movie.getMediumCoverImage())
                     .placeholder(R.drawable.round_image)
+                    .transform(new FitCenter(), new RoundedCorners(20))
                     .into(posterIv);
-            Log.d("TAG", "movie.getRating() : " + movie.getRating());
-            Log.d("TAG", "movie.getRating() / 2 : " + Math.round(movie.getRating() / 2));
-
+            //Log.d("TAG", "movie.getRating() : " + movie.getRating());
+            //Log.d("TAG", "movie.getRating() / 2 : " + Math.round(movie.getRating() / 2));
             ratingBar.setRating((float) Math.floor(movie.getRating()));
         }
     }

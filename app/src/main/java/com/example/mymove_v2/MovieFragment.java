@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,10 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mymove_v2.adapter.MovieAdapter;
 import com.example.mymove_v2.databinding.FragmentMovieBinding;
+import com.example.mymove_v2.interfaces.OnPageTitleChange;
 import com.example.mymove_v2.models.Data;
 import com.example.mymove_v2.models.Movie;
 import com.example.mymove_v2.models.YtsData;
 import com.example.mymove_v2.repository.MovieService;
+import com.example.mymove_v2.utils.Define;
 
 import java.util.List;
 
@@ -28,23 +29,23 @@ import retrofit2.Response;
 
 public class MovieFragment extends Fragment {
 
-    private static final String TAG = "MovieFragment";
+    private static final String TAG = MovieFragment.class.getName();
+    private static MovieFragment movieFragment;
+
     // binding 선언
     FragmentMovieBinding binding;
     MovieService service;
+    OnPageTitleChange onPageTitleChange;
 
-
-    private static MovieFragment movieFragment;
-
-    public static MovieFragment getInstance() {
+    public static MovieFragment getInstance(OnPageTitleChange onPageTitleChange) {
         if (movieFragment == null) {
-            movieFragment = new MovieFragment();
+            movieFragment = new MovieFragment(onPageTitleChange);
         }
         return movieFragment;
     }
 
-    private MovieFragment() {
-        // Required empty public constructor
+    private MovieFragment(OnPageTitleChange onPageTitleChange) {
+        this.onPageTitleChange = onPageTitleChange;
     }
 
     @Override
@@ -52,29 +53,14 @@ public class MovieFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // movie service 초기화
         service = MovieService.retrofit.create(MovieService.class);
-
-        // todo test code 삭제 요망
-//        service.repoContributors("rating", 1, 1)
-//                .enqueue(new Callback<YtsData>() {
-//                    @Override
-//                    public void onResponse(Call<YtsData> call, Response<YtsData> response) {
-//                        Log.d(TAG, "status code : " + response.code());
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<YtsData> call, Throwable t) {
-//                        Log.d(TAG, TAG +" : " + t.getMessage());
-//                    }
-//                });
+        onPageTitleChange.reNameTitle(Define.PAGE_TITLE_MOVIE);
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // binding 초가회
         binding = FragmentMovieBinding.inflate(inflater, container, false);
-
         return binding.getRoot();
     }
 
@@ -125,7 +111,6 @@ public class MovieFragment extends Fragment {
         binding.movieRecyclerView.setLayoutManager(manager);
         binding.movieRecyclerView.hasFixedSize();
     }
-
 }
 
 
