@@ -1,12 +1,13 @@
 
 package com.example.mymove_v2.models;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
-public class Movie {
+public class Movie implements Serializable {
 
     @SerializedName("id")
     @Expose

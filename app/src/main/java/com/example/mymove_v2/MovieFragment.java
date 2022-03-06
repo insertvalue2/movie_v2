@@ -1,5 +1,6 @@
 package com.example.mymove_v2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mymove_v2.adapter.MovieAdapter;
 import com.example.mymove_v2.databinding.FragmentMovieBinding;
+import com.example.mymove_v2.interfaces.OnMovieItemClicked;
 import com.example.mymove_v2.interfaces.OnPageTitleChange;
 import com.example.mymove_v2.models.Data;
 import com.example.mymove_v2.models.Movie;
@@ -27,7 +29,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MovieFragment extends Fragment {
+public class MovieFragment extends Fragment implements OnMovieItemClicked {
 
     private static final String TAG = MovieFragment.class.getName();
     private static MovieFragment movieFragment;
@@ -104,12 +106,23 @@ public class MovieFragment extends Fragment {
         // 1
         MovieAdapter adapter = new MovieAdapter();
         adapter.addItems(movieList);
+        adapter.setOnMovieItemClicked(this);
         // 2
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         // 3
         binding.movieRecyclerView.setAdapter(adapter);
         binding.movieRecyclerView.setLayoutManager(manager);
         binding.movieRecyclerView.hasFixedSize();
+    }
+
+    /**
+     * @param movie MovieAdapter 에서 콜백 메서드로 넘어오는 Movie(사용자가 선택한 뷰에 movie 데이터 정보)
+     */
+    @Override
+    public void selectedItem(Movie movie) {
+        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+        intent.putExtra(MovieDetailActivity.PARAM_NAME_1, movie);
+        startActivity(intent);
     }
 }
 

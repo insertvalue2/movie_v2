@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.FitCenter;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.mymove_v2.R;
+import com.example.mymove_v2.interfaces.OnMovieItemClicked;
 import com.example.mymove_v2.models.Movie;
 
 import java.util.ArrayList;
@@ -22,6 +23,11 @@ import java.util.List;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder> {
 
     private List<Movie> list = new ArrayList<>();
+    private OnMovieItemClicked onMovieItemClicked;
+
+    public void setOnMovieItemClicked(OnMovieItemClicked onMovieItemClicked) {
+        this.onMovieItemClicked = onMovieItemClicked;
+    }
 
     @NonNull
     @Override
@@ -35,6 +41,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Movie movie = list.get(position);
         holder.setItem(movie);
+        // add event listener = 각각에 아이템 뷰
+        holder.movieItemView.setOnClickListener(view -> {
+            onMovieItemClicked.selectedItem(list.get(position));
+        });
     }
 
     @Override
@@ -50,13 +60,17 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
     // inner static class
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
+        private View movieItemView;
         private final ImageView posterIv;
         private final TextView titleTv;
         private final TextView ratingTv;
         private final RatingBar ratingBar;
+        private OnMovieItemClicked onMovieItemClicked;
 
         public MyViewHolder(View movieItemView) {
             super(movieItemView);
+            this.movieItemView = movieItemView;
+
             posterIv = movieItemView.findViewById(R.id.posterIv);
             titleTv = movieItemView.findViewById(R.id.titleTv);
             ratingTv = movieItemView.findViewById(R.id.ratingTv);
