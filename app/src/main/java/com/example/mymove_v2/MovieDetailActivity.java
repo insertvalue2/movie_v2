@@ -1,11 +1,11 @@
 package com.example.mymove_v2;
 
 import android.annotation.SuppressLint;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.mymove_v2.databinding.ActivityMovieDetailBinding;
@@ -17,6 +17,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     public static final String PARAM_NAME_1 = "movie obj";
     private ActivityMovieDetailBinding binding;
     private Movie movie;
+    private BottomSheetFragment bottomSheetFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         binding.titleTextView.setText(movie.getTitle());
         // String.format -> 함수를 만들어서 도전해보기 !
         binding.yearTextView.setText("제작년도 : " + movie.getYear() + "년");
-        binding.runTimeTextView.setText("상영시간 : "  +movie.getRuntime() + "분");
+        binding.runTimeTextView.setText("상영시간 : " + movie.getRuntime() + "분");
 
         Glide.with(this)
                 .load(movie.getMediumCoverImage())
@@ -46,11 +47,26 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .load(movie.getBackgroundImage())
                 .into(binding.backgroundImageView);
 
+        bottomSheetFragment = new BottomSheetFragment(movie);
     }
 
     private void addEventListener() {
         binding.showContentButton.setOnClickListener(view -> {
-            Log.d(TAG, "show content click ");
+            addFragment();
         });
     }
+
+    private void addFragment() {
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        // 잘 알려진 버그 out 시 애니메이션 처리 안됨 ! --> 대체 studio 에서 제공하는 Modal Bottom Sheet Fragment 를 사용해 보자. !
+        transaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_bottom, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
+        transaction.setReorderingAllowed(true);
+        transaction.addToBackStack(null);
+        transaction.replace(binding.bottomSheetContainer.getId(), bottomSheetFragment);
+        transaction.commit();
+    }
 }
+
+

@@ -1,20 +1,20 @@
 package com.example.mymove_v2;
 
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-
 import com.example.mymove_v2.databinding.ActivityMainBinding;
 import com.example.mymove_v2.interfaces.OnPageTitleChange;
-import com.example.mymove_v2.models.Movie;
 import com.example.mymove_v2.utils.Define;
 import com.example.mymove_v2.utils.FragmentType;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements OnPageTitleChange {
 
@@ -39,7 +39,8 @@ public class MainActivity extends AppCompatActivity implements OnPageTitleChange
         } else {
             fragment = InfoFragment.newInstance(this);
         }
-        transaction.replace(binding.mainContainer.getId(), fragment);
+                                                                     // MOVIE, INFO
+        transaction.replace(binding.mainContainer.getId(), fragment, type.toString());
         transaction.commit();
 
     }
@@ -71,6 +72,17 @@ public class MainActivity extends AppCompatActivity implements OnPageTitleChange
         } else {
             binding.topAppBar.setTitle(title);
             binding.topAppBar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //onBackPressed 이벤트시 프래그먼트 TAG 속성으로 현재 활성화 된 프래그먼트 찾기
+        String fragmentTAG = Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(FragmentType.INFO.toString())).getTag();
+        if (fragmentTAG.equals(FragmentType.INFO.toString())) {
+            replaceFragment(FragmentType.MOVIE);
+        } else {
+            super.onBackPressed();
         }
     }
 }

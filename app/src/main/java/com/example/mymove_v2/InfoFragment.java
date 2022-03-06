@@ -3,9 +3,7 @@ package com.example.mymove_v2;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,28 +11,38 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.example.mymove_v2.databinding.FragmentInfoBinding;
 import com.example.mymove_v2.interfaces.OnPageTitleChange;
 import com.example.mymove_v2.utils.Define;
 
 public class InfoFragment extends Fragment {
 
-    FragmentInfoBinding binding;
-    OnPageTitleChange onPageTitleChange;
+    private FragmentInfoBinding binding;
+    private final OnPageTitleChange onPageTitleChange;
+    private static InfoFragment infoFragment;
+    private OnBackPressedCallback onBackPressedCallback;
 
     private InfoFragment(OnPageTitleChange onPageTitleChange) {
         this.onPageTitleChange = onPageTitleChange;
     }
 
     public static InfoFragment newInstance(OnPageTitleChange onPageTitleChange) {
-        InfoFragment fragment = new InfoFragment(onPageTitleChange);
-        return fragment;
+        if (infoFragment == null) {
+            infoFragment = new InfoFragment(onPageTitleChange);
+        }
+        return infoFragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         onPageTitleChange.reNameTitle(Define.PAGE_TITLE_YTS_INFO);
+        fragmentBackPressCustom();
     }
 
     @Override
@@ -42,8 +50,13 @@ public class InfoFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         binding = FragmentInfoBinding.inflate(inflater, container, false);
-        setupWebView();
         return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupWebView();
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -64,5 +77,21 @@ public class InfoFragment extends Fragment {
         webView.loadUrl("https://yts.mx/");
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+    }
+
+    private void fragmentBackPressCustom() {
+        onBackPressedCallback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Log.d("TAG", "stub!");
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onBackPressedCallback.remove();
     }
 }

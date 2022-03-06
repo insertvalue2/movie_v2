@@ -22,6 +22,7 @@ import com.example.mymove_v2.models.YtsData;
 import com.example.mymove_v2.repository.MovieService;
 import com.example.mymove_v2.utils.Define;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -35,13 +36,15 @@ public class MovieFragment extends Fragment implements OnMovieItemClicked {
     private static MovieFragment movieFragment;
 
     // binding 선언
-    FragmentMovieBinding binding;
-    MovieService service;
-    OnPageTitleChange onPageTitleChange;
+    private FragmentMovieBinding binding;
+    private MovieService service;
+    private OnPageTitleChange onPageTitleChange;
+    private List<Movie> movieList = new ArrayList<>();
 
     public static MovieFragment getInstance(OnPageTitleChange onPageTitleChange) {
         if (movieFragment == null) {
             movieFragment = new MovieFragment(onPageTitleChange);
+
         }
         return movieFragment;
     }
@@ -61,7 +64,7 @@ public class MovieFragment extends Fragment implements OnMovieItemClicked {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // binding 초가회
+        // binding 초기화
         binding = FragmentMovieBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -73,29 +76,36 @@ public class MovieFragment extends Fragment implements OnMovieItemClicked {
     }
 
     private void requestMoviesData() {
-        service.repoContributors("rating", 10, 1)
-                .enqueue(new Callback<YtsData>() {
-                    @Override
-                    public void onResponse(Call<YtsData> call, Response<YtsData> response) {
-                        Log.d(TAG, "status code : " + response.code());
-                        if (response.isSuccessful()) {
-                            YtsData ytsData = response.body();
-                            assert ytsData != null;
-                            if (ytsData.getData() != null) {
-                                Data data = ytsData.getData();
-                                setupRecyclerView(data.getMovies());
+        if (movieList.isEmpty()) {
+            service.repoContributors("rating", 10, 1)
+                    .enqueue(new Callback<YtsData>() {
+                        @Override
+                        public void onResponse(Call<YtsData> call, Response<YtsData> response) {
+                            Log.d(TAG, "status code : " + response.code());
+                            if (response.isSuccessful()) {
+                                YtsData ytsData = response.body();
+                                assert ytsData != null;
+                                if (ytsData.getData() != null) {
+                                    //Data data = ytsData.getData();
+                                    movieList = ytsData.getData().getMovies();
+                                    setupRecyclerView(movieList);
+                                }
+                            } else {
+                                Log.d(TAG, TAG + " : " + response.errorBody());
                             }
-                        } else {
-                            Log.d(TAG, TAG + " : " + response.errorBody());
+                            binding.progressIndicator.setVisibility(View.GONE);
                         }
-                        binding.progressIndicator.setVisibility(View.GONE);
-                    }
 
-                    @Override
-                    public void onFailure(Call<YtsData> call, Throwable t) {
-                        Log.d(TAG, TAG + " : " + t.getMessage());
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<YtsData> call, Throwable t) {
+                            Log.d(TAG, TAG + " : " + t.getMessage());
+                        }
+                    });
+        } else {
+            setupRecyclerView(movieList);
+            binding.progressIndicator.setVisibility(View.GONE);
+        }
+
     }
 
     private void setupRecyclerView(List<Movie> movieList) {
@@ -124,6 +134,8 @@ public class MovieFragment extends Fragment implements OnMovieItemClicked {
         intent.putExtra(MovieDetailActivity.PARAM_NAME_1, movie);
         startActivity(intent);
     }
+
+
 }
 
 
