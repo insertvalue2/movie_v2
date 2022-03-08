@@ -1,5 +1,6 @@
 package com.example.mymove_v2.adapter;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,20 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
     public void addItems(List<Movie> list) {
         this.list = list;
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void addEachItem(Movie movie) {
+        this.list.add(movie);
+        this.notifyItemChanged(list.size() - 1);
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void addItem(List<Movie> addList) {
+        this.list.addAll(list.size(), addList);
+        //notifyItemRangeChanged();
+        notifyDataSetChanged();
+    }
+
 
     // inner static class
     public static class MyViewHolder extends RecyclerView.ViewHolder {

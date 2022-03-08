@@ -17,21 +17,21 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mymove_v2.databinding.FragmentInfoBinding;
-import com.example.mymove_v2.interfaces.OnPageTitleChange;
+import com.example.mymove_v2.interfaces.OnChangeToolbarType;
 import com.example.mymove_v2.utils.Define;
 
 public class InfoFragment extends Fragment {
 
     private FragmentInfoBinding binding;
-    private final OnPageTitleChange onPageTitleChange;
+    private final OnChangeToolbarType onPageTitleChange;
     private static InfoFragment infoFragment;
     private OnBackPressedCallback onBackPressedCallback;
 
-    private InfoFragment(OnPageTitleChange onPageTitleChange) {
+    private InfoFragment(OnChangeToolbarType onPageTitleChange) {
         this.onPageTitleChange = onPageTitleChange;
     }
 
-    public static InfoFragment newInstance(OnPageTitleChange onPageTitleChange) {
+    public static InfoFragment newInstance(OnChangeToolbarType onPageTitleChange) {
         if (infoFragment == null) {
             infoFragment = new InfoFragment(onPageTitleChange);
         }
@@ -41,7 +41,7 @@ public class InfoFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        onPageTitleChange.reNameTitle(Define.PAGE_TITLE_YTS_INFO);
+        onPageTitleChange.setupType(Define.PAGE_TITLE_YTS_INFO);
         fragmentBackPressCustom();
     }
 

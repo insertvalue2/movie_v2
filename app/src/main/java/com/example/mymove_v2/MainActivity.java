@@ -10,13 +10,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mymove_v2.databinding.ActivityMainBinding;
-import com.example.mymove_v2.interfaces.OnPageTitleChange;
+import com.example.mymove_v2.interfaces.OnChangeToolbarType;
 import com.example.mymove_v2.utils.Define;
 import com.example.mymove_v2.utils.FragmentType;
 
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements OnPageTitleChange {
+public class MainActivity extends AppCompatActivity implements OnChangeToolbarType {
 
     // 1. data-Binding 사용하기
     ActivityMainBinding binding;
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnPageTitleChange
     }
 
     @Override
-    public void reNameTitle(String title) {
+    public void setupType(String title) {
         if (title.equals(Define.PAGE_TITLE_YTS_INFO)) {
             binding.topAppBar.setVisibility(View.GONE);
         } else {
