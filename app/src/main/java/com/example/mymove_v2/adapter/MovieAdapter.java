@@ -54,6 +54,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
     }
 
     // 통신으로 데이가 전달되면 해당 메서드로 데이터를 전달 받기
+
+    /**
+     *
+     * 프래그먼트가 다시 돌아 올때 통신으로 받았던 movie list 를 그대로 사용
+     * ex ) movieFragment --> infoFragment --> movieFragment
+     * @param list
+     */
     public void addItems(List<Movie> list) {
         this.list = list;
     }

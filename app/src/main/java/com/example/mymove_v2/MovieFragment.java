@@ -22,6 +22,8 @@ import com.example.mymove_v2.models.YtsData;
 import com.example.mymove_v2.repository.MovieService;
 import com.example.mymove_v2.utils.Define;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -42,7 +44,8 @@ public class MovieFragment extends Fragment implements OnMovieItemClicked {
     private boolean isFirstFragmentStart = true;
     // 스크롤시 중복 이벤트 해결 방안
     private boolean preventDuplicateScrollEvent = true;
-
+    // 실수를 많이 하는 부분 조심 ! 선언과 초기화 까지 권장
+    private List<Movie> movieList = new ArrayList<>();
 
     public static MovieFragment getInstance(OnChangeToolbarType onPageTitleChange) {
         if (movieFragment == null) {
@@ -68,10 +71,13 @@ public class MovieFragment extends Fragment implements OnMovieItemClicked {
                              Bundle savedInstanceState) {
         // binding 초기화
         binding = FragmentMovieBinding.inflate(inflater, container, false);
-        setupRecyclerView();
+        setupRecyclerView(movieList);
         // 만약 데이터가 있다면
         if (isFirstFragmentStart) {
             requestMoviesData(currentPageNumber);
+        } else {
+
+            setVisibilityProgressBar(View.GONE);
         }
         return binding.getRoot();
     }
@@ -104,20 +110,25 @@ public class MovieFragment extends Fragment implements OnMovieItemClicked {
                             currentPageNumber++; // 다음 데이터를 받기 위해  currentPageNumber 증가 시켜 주어야 한다.
                             preventDuplicateScrollEvent = true;
                             isFirstFragmentStart = false;
-                            binding.progressIndicator.setVisibility(View.GONE);
+                            setVisibilityProgressBar(View.GONE);
+
                         }
                     }
 
                     @Override
                     public void onFailure(Call<YtsData> call, Throwable t) {
                         Log.d(TAG, t.getMessage());
-                        binding.progressIndicator.setVisibility(View.GONE);
+                        setVisibilityProgressBar(View.GONE);
                     }
                 });
 
     }
 
-    private void setupRecyclerView() {
+    private void setVisibilityProgressBar(int isVisible) {
+        binding.progressIndicator.setVisibility(isVisible);
+    }
+
+    private void setupRecyclerView(List<Movie> listData) {
         //1 어댑터 필요
         //2 매니저 필요
         //3 recyclerview 셋팅
@@ -125,6 +136,7 @@ public class MovieFragment extends Fragment implements OnMovieItemClicked {
         // 1
         adapter = new MovieAdapter();
         adapter.setOnMovieItemClicked(this);
+        adapter.addItems(listData);
         // 2
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         // 3
